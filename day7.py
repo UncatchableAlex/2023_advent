@@ -1,7 +1,7 @@
 import functools
 import collections
 import re
-input = [(line.split(' ')[0], int(line.split(' ')[1])) for line in open('day7.txt').read().split('\n')]
+input = [line.split(' ') for line in open('day7.txt').read().split('\n')]
 
 def hand_type(hand):
     mc = collections.Counter(hand).most_common(5)
@@ -25,6 +25,7 @@ def hand_type(hand):
     else:
         return 6
     
+    
 def hand_type_joker(hand):
     counter = collections.Counter(re.sub('J', '', hand))
     jokers = collections.Counter(hand)['J']
@@ -47,10 +48,9 @@ def hand_type_joker(hand):
     elif 2 - mc[0][1] <= jokers:
         return 5
     else:
-        return 6
+        return 6 
     
     
-        
 def hand_comparator(a, b, joker):
     if joker:
         typea = hand_type_joker(a[0])
@@ -63,20 +63,19 @@ def hand_comparator(a, b, joker):
     if typea > typeb:
         return -1
     else:
-        card_order = ['A', 'K', 'Q', 'T', '9', '8', '7', '6', '5', '4', '3', '2', 'J']
+        card_order = 'AKQT98765432J' if joker else 'AKQJT98765432'
         numberified_cards = [(tuple(map(lambda letter: card_order.index(letter), card)), card) for card in [a[0],b[0]]]
         ordered_hands = sorted(numberified_cards, key=lambda numberified_card: numberified_card[0])
         if ordered_hands[0][1] == a[0]:
             return 1
         else:
-            return -1
-    
-        
+            return -1    
+               
 
 ordered_hand_1 = sorted(input, key=functools.cmp_to_key(lambda a, b: hand_comparator(a,b,joker=False)))
-part1 = sum((i+1) * ordered_hand_1[i][1] for i in range(len(ordered_hand_1)))
+part1 = sum((i+1) * int(ordered_hand_1[i][1]) for i in range(len(ordered_hand_1)))
 print(part1)
 
 ordered_hand_2 = sorted(input, key=functools.cmp_to_key(lambda a, b: hand_comparator(a,b,joker=True)))
-part2 = sum((i+1) * ordered_hand_2[i][1] for i in range(len(ordered_hand_2)))
+part2 = sum((i+1) * int(ordered_hand_2[i][1]) for i in range(len(ordered_hand_2)))
 print(part2)
